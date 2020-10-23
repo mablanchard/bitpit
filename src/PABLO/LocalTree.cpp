@@ -1212,7 +1212,7 @@ namespace bitpit {
         neighbours.clear();
 
         // Default if iedge is nface<iedge<0
-        if (iedge > m_treeConstants->nFaces*2){
+        if (iedge >= m_treeConstants->nEdges){
             return;
         }
 
