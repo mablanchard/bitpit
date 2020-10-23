@@ -1041,7 +1041,7 @@ namespace bitpit {
         if (candidateIdx < m_sizeOctants){
             while(true){
                 // Detect if the candidate is a neighbour
-                u32array3 coordtry = m_octants[candidateIdx].getLogicalCoord();
+                u32array3 coordtry = m_octants[candidateIdx].getLogicalCoordinates();
 
                 bool isNeighbourCandidate = true;
                 for (int idim=0; idim<m_dim; idim++){
@@ -1132,7 +1132,7 @@ namespace bitpit {
             if (candidateIdx < m_sizeGhosts){
                 while(true){
                     // Detect if the candidate is a neighbour
-                    u32array3 coordtry = m_ghosts[candidateIdx].getLogicalCoord();
+                    u32array3 coordtry = m_ghosts[candidateIdx].getLogicalCoordinates();
 
                     bool isNeighbourCandidate = true;
                     for (int idim=0; idim<m_dim; idim++){
@@ -1289,7 +1289,7 @@ namespace bitpit {
         if (candidateIdx < m_sizeOctants) {
             while(true){
                 // Detect if the candidate is a neighbour
-                u32array3 coordtry = m_octants[candidateIdx].getLogicalCoord();
+                u32array3 coordtry = m_octants[candidateIdx].getLogicalCoordinates();
 
                 bool isNeighbourCandidate = true;
                 for (int idim=0; idim<m_dim; idim++){
@@ -1363,7 +1363,7 @@ namespace bitpit {
             if (candidateIdx < m_sizeGhosts){
                 while(true){
                     // Detect if the candidate is a neighbour
-                    u32array3 coordtry = m_ghosts[candidateIdx].getLogicalCoord();
+                    u32array3 coordtry = m_ghosts[candidateIdx].getLogicalCoordinates();
 
                     bool isNeighbourCandidate = true;
                     for (int idim=0; idim<m_dim; idim++){
@@ -1515,7 +1515,7 @@ namespace bitpit {
         if (candidateIdx < m_sizeOctants) {
             while(true){
                 // Detect if the candidate is a neighbour
-                u32array3 coordtry = m_octants[candidateIdx].getLogicalCoord();
+                u32array3 coordtry = m_octants[candidateIdx].getLogicalCoordinates();
 
                 bool isNeighbour = true;
                 for (int idim=0; idim<m_dim; idim++){
@@ -1566,7 +1566,7 @@ namespace bitpit {
             if (candidateIdx < m_sizeGhosts) {
                 while(true){
                     // Detect if the candidate is a neighbour
-                    u32array3 coordtry = m_ghosts[candidateIdx].getLogicalCoord();
+                    u32array3 coordtry = m_ghosts[candidateIdx].getLogicalCoordinates();
 
                     bool isNeighbour = true;
                     for (int idim=0; idim<m_dim; idim++){
