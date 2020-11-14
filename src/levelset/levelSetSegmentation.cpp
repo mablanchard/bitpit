@@ -698,12 +698,12 @@ void LevelSetSegmentation::computeLSInNarrowBand( LevelSetCartesian *visitee, bo
             // check each cell of cloud individually
             for( size_t k = 0; k < stackSize; ++k) {
 
-                long &cellId = stack[k];
-                double &cellDistance = cloudDistance[k];
+                double cellDistance = cloudDistance[k];
 
                 // consider only cells within the search radius
                 if ( cellDistance <= searchRadius ) {
 
+                    long cellId = stack[k];
                     PiercedVector<LevelSetInfo>::iterator lsInfoItr = m_ls.find(cellId) ;
                     if( lsInfoItr == m_ls.end() ){
                         lsInfoItr = m_ls.emplace(cellId) ;
