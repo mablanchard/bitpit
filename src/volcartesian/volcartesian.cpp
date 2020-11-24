@@ -225,9 +225,7 @@ void VolCartesian::reset()
 
 	m_nVertices   = 0;
 	m_nCells      = 0;
-	if (getInterfacesBuildStrategy() == INTERFACES_AUTOMATIC) {
-		m_nInterfaces = 0;
-	}
+	m_nInterfaces = 0;
 }
 
 /*!
@@ -236,8 +234,6 @@ void VolCartesian::reset()
 void VolCartesian::resetInterfaces()
 {
 	PatchKernel::resetInterfaces();
-
-	m_nInterfaces = 0;
 }
 
 /*!
@@ -248,18 +244,6 @@ void VolCartesian::buildInterfaces()
 	// Reset interfaces
 	if (getInterfacesBuildStrategy() != INTERFACES_NONE) {
 		clearInterfaces();
-	}
-
-	// Count the total number of interfaces
-	m_nInterfaces = 0;
-	for (int n = 0; n < getDimension(); n++) {
-		std::array<int, 3> interfaceCount1D = getInterfaceCountDirection(n);
-
-		int nDirectionInterfaces = 1;
-		for (int n = 0; n < getDimension(); n++) {
-			nDirectionInterfaces *= interfaceCount1D[n];
-		}
-		m_nInterfaces += nDirectionInterfaces;
 	}
 
 	// Build interfaces
@@ -443,6 +427,19 @@ void VolCartesian::setDiscretization(const std::array<int, 3> &nCells)
 		m_nCells    *= m_nCells1D[n];
 	}
 	log::cout() << "  - Total cell count: " << m_nCells << "\n";
+
+	// Count the total number of interfaces
+	m_nInterfaces = 0;
+	for (int n = 0; n < getDimension(); n++) {
+		std::array<int, 3> interfaceCount1D = getInterfaceCountDirection(n);
+
+		int nDirectionInterfaces = 1;
+		for (int n = 0; n < getDimension(); n++) {
+			nDirectionInterfaces *= interfaceCount1D[n];
+		}
+		m_nInterfaces += nDirectionInterfaces;
+	}
+	log::cout() << "  - Total interface count: " << m_nInterfaces << "\n";
 
 	// Cell volume
 	initializeCellVolume();
