@@ -35,6 +35,7 @@ project("bitpit" CXX)
 set(ENABLE_MPI 0 CACHE BOOL "If set, the program is compiled with MPI support")
 set(VERBOSE_MAKE 0 CACHE BOOL "Set appropriate compiler and cmake flags to enable verbose output from compilation")
 set(BUILD_SHARED_LIBS 0 CACHE BOOL "Build Shared Libraries")
+set(ENABLE_UNIT_TESTS 0 CACHE BOOL "If set, the unit tests will be built")
 
 if(${CMAKE_VERSION} VERSION_EQUAL "3.9.0" OR ${CMAKE_VERSION} VERSION_GREATER "3.9.0")
     set(LTO_STRATEGY "Auto" CACHE STRING "Choose the Link Time Optimization (LTO) strategy, options are: Auto (i.e., optimiziation is enabled only in release build) Enabled Disabled.")

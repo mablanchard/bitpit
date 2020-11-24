@@ -34,6 +34,13 @@ list(APPEND TESTS "test_volcartesian_00001")
 list(APPEND TESTS "test_volcartesian_00002")
 list(APPEND TESTS "test_volcartesian_00003")
 list(APPEND TESTS "test_volcartesian_00004")
+if(ENABLE_UNIT_TESTS)
+    list(APPEND TESTS "unit_test_volcartesian_constructors")
+    list(APPEND TESTS "unit_test_volcartesian_general")
+    list(APPEND TESTS "unit_test_volcartesian_vertices")
+    list(APPEND TESTS "unit_test_volcartesian_cells")
+    list(APPEND TESTS "unit_test_volcartesian_interfaces")
+endif()
 
 # Test extra libraries
 set(TEST_EXTRA_LIBRARIES "")
