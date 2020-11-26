@@ -23,143 +23,127 @@
 \*---------------------------------------------------------------------------*/
 
 #include <array>
-#if BITPIT_ENABLE_MPI==1
-#include <mpi.h>
-#endif
+
+#define BITPIT_UNIT_TEST_SUITE_NAME unit_test_volcartesian_constructors
+#include "helpers/unit_test.hpp"
 
 #include "bitpit_volcartesian.hpp"
 
-#include "unit_test_volcartesian_common.hpp"
+#include "unit_test_volcartesian_fixtures.hpp"
 
 using namespace bitpit;
 
-/*!
-* Subtest 001
-*
-* Testing patch constructors.
-*/
-void subtest_001()
+BOOST_FIXTURE_TEST_CASE(constructor_1, TestPatchConstants)
 {
-    {
-        std::unique_ptr<VolCartesian> patch = std::unique_ptr<VolCartesian>(new VolCartesian());
-        if (!patch) {
-            throw std::runtime_error("Function 'VolCartesian()' failed unit test.");
-        }
-    }
+    BITPIT_UNIT_TEST_DISPLAY_NAME(log::cout());
 
-    {
-        int dimension = DIMENSION;
-        std::array<double, 3> origin = {{ORIGIN_X, ORIGIN_Y, ORIGIN_Z}};
-        std::array<double, 3> lengths = {{LENGTH_X, LENGTH_Y, LENGTH_Z}};
-        std::array<int, 3> nCells = {{N_CELLS_X, N_CELLS_Y, N_CELLS_Z}};
-        std::unique_ptr<VolCartesian> patch = std::unique_ptr<VolCartesian>(new VolCartesian(dimension, origin, lengths, nCells));
-        if (!patch) {
-            throw std::runtime_error("Function 'VolCartesian(int dimension, const std::array<double, 3> &origin, const std::array<double, 3> &lengths, const std::array<int, 3> &nCells)' failed unit test.");
-        }
-    }
-
-    {
-        int id = 0;
-        int dimension = DIMENSION;
-        std::array<double, 3> origin = {{ORIGIN_X, ORIGIN_Y, ORIGIN_Z}};
-        std::array<double, 3> lengths = {{LENGTH_X, LENGTH_Y, LENGTH_Z}};
-        std::array<int, 3> nCells = {{N_CELLS_X, N_CELLS_Y, N_CELLS_Z}};
-        std::unique_ptr<VolCartesian> patch = std::unique_ptr<VolCartesian>(new VolCartesian(id, dimension, origin, lengths, nCells));
-        if (!patch) {
-            throw std::runtime_error("Function 'VolCartesian(int id, int dimension, const std::array<double, 3> &origin, const std::array<double, 3> &lengths, const std::array<int, 3> &nCells)' failed unit test.");
-        }
-    }
-
-    {
-        int dimension = DIMENSION;
-        std::array<double, 3> origin = {{ORIGIN_X, ORIGIN_Y, ORIGIN_Z}};
-        double length = LENGTH_X;
-        int nCells1D = N_CELLS_X;
-        std::unique_ptr<VolCartesian> patch = std::unique_ptr<VolCartesian>(new VolCartesian(dimension, origin, length, nCells1D));
-        if (!patch) {
-            throw std::runtime_error("Function 'VolCartesian(int dimension, const std::array<double, 3> &origin, double length, int nCells1D)' failed unit test.");
-        }
-    }
-
-    {
-        int id = 0;
-        int dimension = DIMENSION;
-        std::array<double, 3> origin = {{ORIGIN_X, ORIGIN_Y, ORIGIN_Z}};
-        double length = LENGTH_X;
-        int nCells1D = N_CELLS_X;
-        std::unique_ptr<VolCartesian> patch = std::unique_ptr<VolCartesian>(new VolCartesian(id, dimension, origin, length, nCells1D));
-        if (!patch) {
-            throw std::runtime_error("Function 'VolCartesian(int id, int dimension, const std::array<double, 3> &origin, double length, int nCells1D)' failed unit test.");
-        }
-    }
-
-    {
-        int dimension = DIMENSION;
-        std::array<double, 3> origin = {{ORIGIN_X, ORIGIN_Y, ORIGIN_Z}};
-        double length = LENGTH_X;
-        double dh = SPACING_X;
-        std::unique_ptr<VolCartesian> patch = std::unique_ptr<VolCartesian>(new VolCartesian(dimension, origin, length, dh));
-        if (!patch) {
-            throw std::runtime_error("Function 'VolCartesian(int dimension, const std::array<double, 3> &origin, double length, double dh)' failed unit test.");
-        }
-    }
-
-    {
-        int id = 0;
-        int dimension = DIMENSION;
-        std::array<double, 3> origin = {{ORIGIN_X, ORIGIN_Y, ORIGIN_Z}};
-        double length = LENGTH_X;
-        double dh = SPACING_X;
-        std::unique_ptr<VolCartesian> patch = std::unique_ptr<VolCartesian>(new VolCartesian(id, dimension, origin, length, dh));
-        if (!patch) {
-            throw std::runtime_error("Function 'VolCartesian(int id, int dimension, const std::array<double, 3> &origin, double length, double dh)' failed unit test.");
-        }
-    }
-
-    {
-        std::unique_ptr<VolCartesian> initialPatch = createTestPatch(VolCartesian::MEMORY_NORMAL);
-
-        int archiveVersion = 1;
-        std::string archiveHeader = "VolCartesian - Unit Test";
-        OBinaryArchive binaryWriter("unit_test", archiveVersion, archiveHeader);
-        initialPatch->dump(binaryWriter.getStream());
-        binaryWriter.close();
-
-        IBinaryArchive binaryReader("unit_test");
-        std::unique_ptr<VolCartesian> restoredPatch = std::unique_ptr<VolCartesian>(new VolCartesian(binaryReader.getStream()));
-        binaryReader.close();
-        if (!restoredPatch) {
-            throw std::runtime_error("Function 'VolCartesian(std::istream &stream)' failed unit test.");
-        }
+    std::unique_ptr<VolCartesian> patch = std::unique_ptr<VolCartesian>(new VolCartesian());
+    if (!patch) {
+        throw std::runtime_error("Function 'VolCartesian()' failed unit test.");
     }
 }
 
-/*!
-* Main program.
-*/
-int main(int argc, char *argv[])
+BOOST_FIXTURE_TEST_CASE(constructor_2, TestPatchConstants)
 {
-#if BITPIT_ENABLE_MPI==1
-    MPI_Init(&argc,&argv);
-#else
-    BITPIT_UNUSED(argc);
-    BITPIT_UNUSED(argv);
-#endif
+    BITPIT_UNIT_TEST_DISPLAY_NAME(log::cout());
 
-    // Initialize the logger
-    log::manager().initialize(log::COMBINED);
-
-    // Run the subtests
-    log::cout() << "Unit tests for VolCartesian constructors" << std::endl;
-
-    try {
-        subtest_001();
-    } catch (const std::exception &exception) {
-        log::cout() << exception.what() << std::endl;
-        exit(1);
+    int dimension = DIMENSION;
+    std::array<double, 3> origin = {{ORIGIN_X, ORIGIN_Y, ORIGIN_Z}};
+    std::array<double, 3> lengths = {{LENGTH_X, LENGTH_Y, LENGTH_Z}};
+    std::array<int, 3> nCells = {{N_CELLS_X, N_CELLS_Y, N_CELLS_Z}};
+    std::unique_ptr<VolCartesian> patch = std::unique_ptr<VolCartesian>(new VolCartesian(dimension, origin, lengths, nCells));
+    if (!patch) {
+        throw std::runtime_error("Function 'VolCartesian(int dimension, const std::array<double, 3> &origin, const std::array<double, 3> &lengths, const std::array<int, 3> &nCells)' failed unit test.");
     }
+}
 
-#if BITPIT_ENABLE_MPI==1
-    MPI_Finalize();
-#endif
+BOOST_FIXTURE_TEST_CASE(constructor_3, TestPatchConstants)
+{
+    BITPIT_UNIT_TEST_DISPLAY_NAME(log::cout());
+
+    int id = 0;
+    int dimension = DIMENSION;
+    std::array<double, 3> origin = {{ORIGIN_X, ORIGIN_Y, ORIGIN_Z}};
+    std::array<double, 3> lengths = {{LENGTH_X, LENGTH_Y, LENGTH_Z}};
+    std::array<int, 3> nCells = {{N_CELLS_X, N_CELLS_Y, N_CELLS_Z}};
+    std::unique_ptr<VolCartesian> patch = std::unique_ptr<VolCartesian>(new VolCartesian(id, dimension, origin, lengths, nCells));
+    if (!patch) {
+        throw std::runtime_error("Function 'VolCartesian(int id, int dimension, const std::array<double, 3> &origin, const std::array<double, 3> &lengths, const std::array<int, 3> &nCells)' failed unit test.");
+    }
+}
+
+BOOST_FIXTURE_TEST_CASE(constructor_4, TestPatchConstants)
+{
+    BITPIT_UNIT_TEST_DISPLAY_NAME(log::cout());
+
+    int dimension = DIMENSION;
+    std::array<double, 3> origin = {{ORIGIN_X, ORIGIN_Y, ORIGIN_Z}};
+    double length = LENGTH_X;
+    int nCells1D = N_CELLS_X;
+    std::unique_ptr<VolCartesian> patch = std::unique_ptr<VolCartesian>(new VolCartesian(dimension, origin, length, nCells1D));
+    if (!patch) {
+        throw std::runtime_error("Function 'VolCartesian(int dimension, const std::array<double, 3> &origin, double length, int nCells1D)' failed unit test.");
+    }
+}
+
+BOOST_FIXTURE_TEST_CASE(constructor_5, TestPatchConstants)
+{
+    BITPIT_UNIT_TEST_DISPLAY_NAME(log::cout());
+
+    int id = 0;
+    int dimension = DIMENSION;
+    std::array<double, 3> origin = {{ORIGIN_X, ORIGIN_Y, ORIGIN_Z}};
+    double length = LENGTH_X;
+    int nCells1D = N_CELLS_X;
+    std::unique_ptr<VolCartesian> patch = std::unique_ptr<VolCartesian>(new VolCartesian(id, dimension, origin, length, nCells1D));
+    if (!patch) {
+        throw std::runtime_error("Function 'VolCartesian(int id, int dimension, const std::array<double, 3> &origin, double length, int nCells1D)' failed unit test.");
+    }
+}
+
+BOOST_FIXTURE_TEST_CASE(constructor_6, TestPatchConstants)
+{
+    BITPIT_UNIT_TEST_DISPLAY_NAME(log::cout());
+
+    int dimension = DIMENSION;
+    std::array<double, 3> origin = {{ORIGIN_X, ORIGIN_Y, ORIGIN_Z}};
+    double length = LENGTH_X;
+    double dh = SPACING_X;
+    std::unique_ptr<VolCartesian> patch = std::unique_ptr<VolCartesian>(new VolCartesian(dimension, origin, length, dh));
+    if (!patch) {
+        throw std::runtime_error("Function 'VolCartesian(int dimension, const std::array<double, 3> &origin, double length, double dh)' failed unit test.");
+    }
+}
+
+BOOST_FIXTURE_TEST_CASE(constructor_7, TestPatchConstants)
+{
+    BITPIT_UNIT_TEST_DISPLAY_NAME(log::cout());
+
+    int id = 0;
+    int dimension = DIMENSION;
+    std::array<double, 3> origin = {{ORIGIN_X, ORIGIN_Y, ORIGIN_Z}};
+    double length = LENGTH_X;
+    double dh = SPACING_X;
+    std::unique_ptr<VolCartesian> patch = std::unique_ptr<VolCartesian>(new VolCartesian(id, dimension, origin, length, dh));
+    if (!patch) {
+        throw std::runtime_error("Function 'VolCartesian(int id, int dimension, const std::array<double, 3> &origin, double length, double dh)' failed unit test.");
+    }
+}
+
+BOOST_FIXTURE_TEST_CASE(constructor_8, NormalTestPatch)
+{
+    BITPIT_UNIT_TEST_DISPLAY_NAME(log::cout());
+
+    int archiveVersion = 1;
+    std::string archiveHeader = "VolCartesian - Unit Test";
+    OBinaryArchive binaryWriter("unit_test", archiveVersion, archiveHeader);
+    patch->dump(binaryWriter.getStream());
+    binaryWriter.close();
+
+    IBinaryArchive binaryReader("unit_test");
+    std::unique_ptr<VolCartesian> restoredPatch = std::unique_ptr<VolCartesian>(new VolCartesian(binaryReader.getStream()));
+    binaryReader.close();
+    if (!restoredPatch) {
+        throw std::runtime_error("Function 'VolCartesian(std::istream &stream)' failed unit test.");
+    }
 }

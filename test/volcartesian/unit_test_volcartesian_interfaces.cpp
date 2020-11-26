@@ -24,193 +24,165 @@
 
 #include <array>
 #include <vector>
-#if BITPIT_ENABLE_MPI==1
-#include <mpi.h>
-#endif
+
+#define BITPIT_UNIT_TEST_SUITE_NAME unit_test_volcartesian_cells
+#include "helpers/unit_test.hpp"
 
 #include "bitpit_common.hpp"
 #include "bitpit_volcartesian.hpp"
 
-#include "unit_test_volcartesian_common.hpp"
+#include "unit_test_volcartesian_fixtures.hpp"
 
 using namespace bitpit;
 
-/*!
- * Subtest 001
- *
- * Testing interface-related methods - Normal memory mode.
- */
-void subtest_001()
+BOOST_AUTO_TEST_SUITE(normalMemoryMode)
+
+BOOST_FIXTURE_TEST_CASE(normalMemoryMode_getInterfaceCount, NormalTestPatch)
 {
-    {
-        const long EXPECTED_RESULT = N_INTERFACES;
+    BITPIT_UNIT_TEST_DISPLAY_NAME(log::cout());
 
-        std::unique_ptr<VolCartesian> patch = createTestPatch(VolCartesian::MEMORY_NORMAL);
+    const long EXPECTED_RESULT = N_INTERFACES;
 
-        patch->buildInterfaces();
-        long result = patch->getInterfaceCount();
-        if (result != EXPECTED_RESULT) {
-            throw std::runtime_error("Function 'getInterfaceCount() const' failed unit test.");
-        }
+    patch->buildInterfaces();
+    long result = patch->getInterfaceCount();
+    if (result != EXPECTED_RESULT) {
+        throw std::runtime_error("Function 'getInterfaceCount() const' failed unit test.");
     }
+}
 
-    {
-        const ElementType EXPECTED_RESULT = ElementType::PIXEL;
+BOOST_FIXTURE_TEST_CASE(normalMemoryMode_getInterfaceType_1, NormalTestPatch)
+{
+    BITPIT_UNIT_TEST_DISPLAY_NAME(log::cout());
 
-        std::unique_ptr<VolCartesian> patch = createTestPatch(VolCartesian::MEMORY_NORMAL);
+    const ElementType EXPECTED_RESULT = ElementType::PIXEL;
 
-        ElementType result = patch->getInterfaceType();
-        if (result != EXPECTED_RESULT) {
-            throw std::runtime_error("Function 'getInterfaceType() const' failed unit test.");
-        }
+    ElementType result = patch->getInterfaceType();
+    if (result != EXPECTED_RESULT) {
+        throw std::runtime_error("Function 'getInterfaceType() const' failed unit test.");
     }
+}
 
-    {
-        const ElementType EXPECTED_RESULT = ElementType::PIXEL;
+BOOST_FIXTURE_TEST_CASE(normalMemoryMode_getInterfaceType_2, NormalTestPatch)
+{
+    BITPIT_UNIT_TEST_DISPLAY_NAME(log::cout());
 
-        std::unique_ptr<VolCartesian> patch = createTestPatch(VolCartesian::MEMORY_NORMAL);
+    const ElementType EXPECTED_RESULT = ElementType::PIXEL;
 
-        ElementType result = patch->getInterfaceType(0);
-        if (result != EXPECTED_RESULT) {
-            throw std::runtime_error("Function 'getInterfaceType() const' failed unit test.");
-        }
+    ElementType result = patch->getInterfaceType(0);
+    if (result != EXPECTED_RESULT) {
+        throw std::runtime_error("Function 'getInterfaceType() const' failed unit test.");
     }
+}
 
-    {
-        const long EXPECTED_RESULT = 0;
+BOOST_FIXTURE_TEST_CASE(normalMemoryMode_resetInterfaces, NormalTestPatch)
+{
+    BITPIT_UNIT_TEST_DISPLAY_NAME(log::cout());
 
-        std::unique_ptr<VolCartesian> patch = createTestPatch(VolCartesian::MEMORY_NORMAL);
+    const long EXPECTED_RESULT = 0;
 
-        patch->buildInterfaces();
-        patch->resetInterfaces();
-        long result = patch->getInterfaces().size();
-        if (result != EXPECTED_RESULT) {
-            throw std::runtime_error("Function 'resetInterfaces()' failed unit test.");
-        }
+    patch->buildInterfaces();
+    patch->resetInterfaces();
+    long result = patch->getInterfaces().size();
+    if (result != EXPECTED_RESULT) {
+        throw std::runtime_error("Function 'resetInterfaces()' failed unit test.");
     }
+}
 
-    {
-        const long EXPECTED_RESULT = N_INTERFACES;
+BOOST_FIXTURE_TEST_CASE(normalMemoryMode_buildInterfaces, NormalTestPatch)
+{
+    BITPIT_UNIT_TEST_DISPLAY_NAME(log::cout());
 
-        std::unique_ptr<VolCartesian> patch = createTestPatch(VolCartesian::MEMORY_NORMAL);
+    const long EXPECTED_RESULT = N_INTERFACES;
 
-        patch->resetInterfaces();
-        patch->buildInterfaces();
-        long result = patch->getInterfaces().size();
-        if (result != EXPECTED_RESULT) {
-            throw std::runtime_error("Function 'buildInterfaces()' failed unit test.");
-        }
+    patch->resetInterfaces();
+    patch->buildInterfaces();
+    long result = patch->getInterfaces().size();
+    if (result != EXPECTED_RESULT) {
+        throw std::runtime_error("Function 'buildInterfaces()' failed unit test.");
     }
+}
 
-    {
-        const long EXPECTED_RESULT = N_INTERFACES;
+BOOST_FIXTURE_TEST_CASE(normalMemoryMode_updateInterfaces, NormalTestPatch)
+{
+    BITPIT_UNIT_TEST_DISPLAY_NAME(log::cout());
 
-        std::unique_ptr<VolCartesian> patch = createTestPatch(VolCartesian::MEMORY_NORMAL);
+    const long EXPECTED_RESULT = N_INTERFACES;
 
-        patch->resetInterfaces();
-        patch->updateInterfaces(patch->getCells().getIds());
-        long result = patch->getInterfaces().size();
-        if (result != EXPECTED_RESULT) {
-            throw std::runtime_error("Function 'updateInterfaces(const std::vector<long> &cellIds)' failed unit test.");
-        }
+    patch->resetInterfaces();
+    patch->updateInterfaces(patch->getCells().getIds());
+    long result = patch->getInterfaces().size();
+    if (result != EXPECTED_RESULT) {
+        throw std::runtime_error("Function 'updateInterfaces(const std::vector<long> &cellIds)' failed unit test.");
     }
+}
 
-    {
-        const double EXPECTED_RESULT = INTERFACE_AREA_X;
+BOOST_FIXTURE_TEST_CASE(normalMemoryMode_evalInterfaceArea, NormalTestPatch)
+{
+    BITPIT_UNIT_TEST_DISPLAY_NAME(log::cout());
 
-        std::unique_ptr<VolCartesian> patch = createTestPatch(VolCartesian::MEMORY_NORMAL);
+    const double EXPECTED_RESULT = INTERFACE_AREA_X;
 
-        patch->buildInterfaces();
-        double result = patch->evalInterfaceArea(0);
-        if (!utils::DoubleFloatingEqual()(result, EXPECTED_RESULT)) {
-            throw std::runtime_error("Function 'evalInterfaceArea(long id) const' failed unit test.");
-        }
+    patch->buildInterfaces();
+    double result = patch->evalInterfaceArea(0);
+    if (!utils::DoubleFloatingEqual()(result, EXPECTED_RESULT)) {
+        throw std::runtime_error("Function 'evalInterfaceArea(long id) const' failed unit test.");
     }
+}
 
-    {
-        const std::array<double, 3> EXPECTED_RESULT = {{-1., 0., 0.}};
+BOOST_FIXTURE_TEST_CASE(normalMemoryMode_evalInterfaceNormal, NormalTestPatch)
+{
+    BITPIT_UNIT_TEST_DISPLAY_NAME(log::cout());
 
-        std::unique_ptr<VolCartesian> patch = createTestPatch(VolCartesian::MEMORY_NORMAL);
+    const std::array<double, 3> EXPECTED_RESULT = {{-1., 0., 0.}};
 
-        patch->buildInterfaces();
-        std::array<double, 3> result = patch->evalInterfaceNormal(10);
-        for (int d = 0; d < 3; ++d) {
-            if (!utils::DoubleFloatingEqual()(result[d], EXPECTED_RESULT[d])) {
-                throw std::runtime_error("Function 'evalInterfaceNormal(long id) const' failed unit test.");
-            }
+    patch->buildInterfaces();
+    std::array<double, 3> result = patch->evalInterfaceNormal(10);
+    for (int d = 0; d < 3; ++d) {
+        if (!utils::DoubleFloatingEqual()(result[d], EXPECTED_RESULT[d])) {
+            throw std::runtime_error("Function 'evalInterfaceNormal(long id) const' failed unit test.");
         }
     }
 }
 
-/*!
- * Subtest 002
- *
- * Testing interface-related methods - Light memory mode.
- */
-void subtest_002()
+BOOST_AUTO_TEST_SUITE_END()
+
+BOOST_AUTO_TEST_SUITE(lightMemoryMode)
+
+BOOST_FIXTURE_TEST_CASE(lightMemoryMode_getInterfaceCount_1, LightTestPatch)
 {
-    {
-        const long EXPECTED_RESULT = N_INTERFACES;
+    BITPIT_UNIT_TEST_DISPLAY_NAME(log::cout());
 
-        std::unique_ptr<VolCartesian> patch = createTestPatch(VolCartesian::MEMORY_LIGHT);
+    const long EXPECTED_RESULT = N_INTERFACES;
 
-        patch->buildInterfaces();
-        long result = patch->getInterfaceCount();
-        if (result != EXPECTED_RESULT) {
-            throw std::runtime_error("Function 'getInterfaceCount() const' failed unit test.");
-        }
-    }
-
-    {
-        const ElementType EXPECTED_RESULT = ElementType::PIXEL;
-
-        std::unique_ptr<VolCartesian> patch = createTestPatch(VolCartesian::MEMORY_LIGHT);
-
-        ElementType result = patch->getInterfaceType();
-        if (result != EXPECTED_RESULT) {
-            throw std::runtime_error("Function 'getInterfaceType() const' failed unit test.");
-        }
-    }
-
-    {
-        const ElementType EXPECTED_RESULT = ElementType::PIXEL;
-
-        std::unique_ptr<VolCartesian> patch = createTestPatch(VolCartesian::MEMORY_LIGHT);
-
-        ElementType result = patch->getInterfaceType(0);
-        if (result != EXPECTED_RESULT) {
-            throw std::runtime_error("Function 'getInterfaceType() const' failed unit test.");
-        }
+    patch->buildInterfaces();
+    long result = patch->getInterfaceCount();
+    if (result != EXPECTED_RESULT) {
+        throw std::runtime_error("Function 'getInterfaceCount() const' failed unit test.");
     }
 }
 
-/*!
- * Main program.
- */
-int main(int argc, char *argv[])
+BOOST_FIXTURE_TEST_CASE(lightMemoryMode_getInterfaceType_1, LightTestPatch)
 {
-#if BITPIT_ENABLE_MPI==1
-    MPI_Init(&argc,&argv);
-#else
-    BITPIT_UNUSED(argc);
-    BITPIT_UNUSED(argv);
-#endif
+    BITPIT_UNIT_TEST_DISPLAY_NAME(log::cout());
 
-    // Initialize the logger
-    log::manager().initialize(log::COMBINED);
+    const ElementType EXPECTED_RESULT = ElementType::PIXEL;
 
-    // Run the subtests
-    log::cout() << "Unit tests for VolCartesian interfaces-related methods" << std::endl;
-
-    try {
-        subtest_001();
-        subtest_002();
-    } catch (const std::exception &exception) {
-        log::cout() << exception.what() << std::endl;
-        exit(1);
+    ElementType result = patch->getInterfaceType();
+    if (result != EXPECTED_RESULT) {
+        throw std::runtime_error("Function 'getInterfaceType() const' failed unit test.");
     }
-
-#if BITPIT_ENABLE_MPI==1
-    MPI_Finalize();
-#endif
 }
+
+BOOST_FIXTURE_TEST_CASE(lightMemoryMode_getInterfaceType_2, LightTestPatch)
+{
+    BITPIT_UNIT_TEST_DISPLAY_NAME(log::cout());
+
+    const ElementType EXPECTED_RESULT = ElementType::PIXEL;
+
+    ElementType result = patch->getInterfaceType(0);
+    if (result != EXPECTED_RESULT) {
+        throw std::runtime_error("Function 'getInterfaceType() const' failed unit test.");
+    }
+}
+
+BOOST_AUTO_TEST_SUITE_END()
