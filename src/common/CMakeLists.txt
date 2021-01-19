@@ -30,7 +30,7 @@ initialize_lto_property()
 get_filename_component(MODULE_NAME ${CMAKE_CURRENT_LIST_DIR} NAME)
 
 # Reset the variable
-set(HEADERS "")
+set(HEADERS "${CMAKE_CURRENT_BINARY_DIR}/version.hpp")
 
 # Generate the bitpit header file
 set(INCLUDE_LIST "#include \"bitpit_common.hpp\"\n")
