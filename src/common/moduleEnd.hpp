@@ -2,7 +2,7 @@
  *
  *  bitpit
  *
- *  Copyright (C) 2015-2019 OPTIMAD engineering Srl
+ *  Copyright (C) 2015-2021 OPTIMAD engineering Srl
  *
  *  -------------------------------------------------------------------------
  *  License
@@ -22,15 +22,7 @@
  *
 \*---------------------------------------------------------------------------*/
 
-#ifndef __BITPIT_MODULE_PABLO_HPP__
-#define __BITPIT_MODULE_PABLO_HPP__
-#include "moduleBegin.hpp"
+#ifndef __BITPIT_MODULE_END_HPP__
+#define __BITPIT_MODULE_END_HPP__
 
-/*!
- * @defgroup PABLO Octree (PABLO)
- */
-
-#include "PabloUniform.hpp"
-
-#include "moduleEnd.hpp"
 #endif
