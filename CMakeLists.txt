@@ -388,8 +388,8 @@ else ()
 endif ()
 
 # Write version to file
-set (TEMPLATE_VERSION_HEADER_FILENAME "${PROJECT_SOURCE_DIR}/src/common/${CMAKE_PROJECT_NAME}_version.hpp.in")
-set (CONFIGURED_VERSION_HEADER_FILENAME "${PROJECT_BINARY_DIR}/src/common/${CMAKE_PROJECT_NAME}_version.hpp")
+set (TEMPLATE_VERSION_HEADER_FILENAME "${PROJECT_SOURCE_DIR}/src/common/version.hpp.in")
+set (CONFIGURED_VERSION_HEADER_FILENAME "${PROJECT_BINARY_DIR}/src/common/version.hpp")
 configure_file("${TEMPLATE_VERSION_HEADER_FILENAME}" "${CONFIGURED_VERSION_HEADER_FILENAME}")
 
 #------------------------------------------------------------------------------------#
