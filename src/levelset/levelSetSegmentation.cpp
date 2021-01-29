@@ -184,6 +184,7 @@ void SegmentationKernel::setSurface( const SurfUnstructured *surface, double fea
  */
 int SegmentationKernel::getSegmentInfo( const std::array<double,3> &pointCoords, long segmentId, bool signd, double &distance, std::array<double,3> &gradient, std::array<double,3> &normal ) const {
 
+    // Segment information
     SurfUnstructured::CellConstIterator segmentIterator = m_surface->getCellConstIterator(segmentId);
     const Cell &segment = *segmentIterator ;
     ElementType segmentType = segment.getType();
@@ -191,14 +192,15 @@ int SegmentationKernel::getSegmentInfo( const std::array<double,3> &pointCoords,
     int nSegmentVertices = segmentVertexIds.size() ;
     const std::vector<std::array<double,3>> &segmentVertexNormals = m_segmentVertexNormals.rawAt(segmentIterator.getRawIndex());
 
+    // Projct the point on the surface and evaluate the point-projeciont vector
     BITPIT_CREATE_WORKSPACE(lambda, double, nSegmentVertices, ReferenceElementInfo::MAX_ELEM_VERTICES);
-    std::array<double,3> projectionCoords;
+    std::array<double,3> pointProjectionVector = pointCoords;
     switch (segmentType) {
 
     case ElementType::VERTEX :
     {
         long id = segmentVertexIds[0] ;
-        projectionCoords = m_surface->getVertexCoords(id);
+        pointProjectionVector -= m_surface->getVertexCoords(id);
 
         break;
     }
@@ -207,7 +209,7 @@ int SegmentationKernel::getSegmentInfo( const std::array<double,3> &pointCoords,
     {
         long id0 = segmentVertexIds[0] ;
         long id1 = segmentVertexIds[1] ;
-        projectionCoords = CGElem::projectPointSegment( pointCoords, m_surface->getVertexCoords(id0), m_surface->getVertexCoords(id1), lambda);
+        pointProjectionVector -= CGElem::projectPointSegment( pointCoords, m_surface->getVertexCoords(id0), m_surface->getVertexCoords(id1), lambda);
 
         break;
     }
@@ -217,7 +219,7 @@ int SegmentationKernel::getSegmentInfo( const std::array<double,3> &pointCoords,
         long id0 = segmentVertexIds[0] ;
         long id1 = segmentVertexIds[1] ;
         long id2 = segmentVertexIds[2] ;
-        projectionCoords = CGElem::projectPointTriangle( pointCoords, m_surface->getVertexCoords(id0), m_surface->getVertexCoords(id1), m_surface->getVertexCoords(id2), lambda );
+        pointProjectionVector -= CGElem::projectPointTriangle( pointCoords, m_surface->getVertexCoords(id0), m_surface->getVertexCoords(id1), m_surface->getVertexCoords(id2), lambda );
 
         break;
     }
@@ -230,6 +232,7 @@ int SegmentationKernel::getSegmentInfo( const std::array<double,3> &pointCoords,
 
     }
 
+    // Evaluate surface normal
     if (segmentType != ElementType::VERTEX) {
         normal = lambda[0] * segmentVertexNormals[0] ;
         for (int i = 1; i < nSegmentVertices; ++i) {
@@ -240,18 +243,33 @@ int SegmentationKernel::getSegmentInfo( const std::array<double,3> &pointCoords,
         normal.fill(0.);
     }
 
-    gradient = pointCoords-projectionCoords;
-    distance = norm2(gradient); 
-    gradient /= distance;
+    // Evaluate distance from surface and levelset gradient
+    //
+    // If the distance is zero, the point and the projection are coincident.
+    // We assume that the point is on the outer side of the surface, this
+    // means that the distance is a positive zero and that the gradient can
+    // be set equal to the surface normal.
+    distance = norm2(pointProjectionVector);
+    if (distance < m_surface->getTol()) {
+        distance = std::abs(distance);
+        gradient = normal;
 
-    // the sign is computed by determining the side of point p
-    // with respect to the normal plane 
+        return 0;
+    }
+
+    // Evaluate levelset gradient
+    gradient = pointProjectionVector / distance;
+
+    // Evaluate levelset sign
+    //
+    // The sign is computed by determining the side of the point with respect
+    // to the normal plane. If the point lies on the normal plane, its sign
+    // will be zero. Since we know that the point doesn't lie on the surface
+    // (if we are here, the distance between the point and ist projeciton is
+    // (greater than zero), the sign must be evaluated taking into account the
+    // the curvature of the surface. However, this is not yet implemented.
     int s = sign( dotProduct(gradient, normal) );
-
-    // If the point lies on the normal plane (s = 0), but its distance is
-    // finite the sign must be evaluated considering the curvature of the
-    // surface. This is not implemented yet.
-    if(s==0 && distance>0){
+    if (s == 0) {
         distance = levelSetDefaults::VALUE;
         gradient = levelSetDefaults::GRADIENT;
         normal   = levelSetDefaults::GRADIENT;
@@ -259,6 +277,8 @@ int SegmentationKernel::getSegmentInfo( const std::array<double,3> &pointCoords,
         return 1;
     }
 
+    // Use sign to update levelser information
+    //
     // If signed distance are computed, the distance value and gradient
     // need to be changed accordingly. If unsigned distance are computed
     // the orientation of the suraface normal is discarded and in order
