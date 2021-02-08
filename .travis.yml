@@ -210,7 +210,7 @@ before_script:
 
 script:
   - if [ ${TRAVIS_BRANCH} != "coverity" ]; then
-      make -j2 && ctest -VV -R surfunstructured;
+      make -j2 && cd test/surfunstructured && /usr/bin/mpiexec -n 3 /home/travis/build/optimad/bitpit/build/test/surfunstructured/test_surfunstructured_parallel_00008
     fi
 
 after_script:
