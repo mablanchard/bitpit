@@ -800,7 +800,8 @@ std::array<double, 3> SurfaceKernel::evalLimitedVertexNormal(long id, int vertex
  * contain the limited normal
 */
 void SurfaceKernel::evalVertexNormals(long id, int vertex, std::size_t nVertexNeighs, const long *vertexNeighs, double limit,
-                                      std::array<double, 3> *unlimitedNormal, std::array<double, 3> *limitedNormal) const
+                                      std::array<double, 3> *unlimitedNormal, std::array<double, 3> *limitedNormal,
+                                      std::unordered_map<long, std::array<double,3>> *facetNormalsCache) const
 {
     // Early return if no calculation is needed
     if (!unlimitedNormal && !limitedNormal) {
@@ -811,9 +812,20 @@ void SurfaceKernel::evalVertexNormals(long id, int vertex, std::size_t nVertexNe
     const Cell &cell = getCell(id);
     long vertexId = cell.getVertexId(vertex);
 
-    // Get cell information
+    // Get cell vertex angle
     double cellVertexAngle = evalAngleAtVertex(id, vertex);
-    std::array<double, 3> cellNormal = evalFacetNormal(id);
+
+    // Get cell normal
+    std::array<double, 3> cellNormal;
+    if (!facetNormalsCache) {
+        cellNormal = evalFacetNormal(id);
+    } else {
+        auto cacheItr = facetNormalsCache->find(id);
+        if (cacheItr == facetNormalsCache->end()) {
+            cacheItr = facetNormalsCache->insert({id, evalFacetNormal(id)}).first;
+        }
+        cellNormal = cacheItr->second;
+    }
 
     // Initialize unlimited normal
     if (unlimitedNormal) {
@@ -830,8 +842,21 @@ void SurfaceKernel::evalVertexNormals(long id, int vertex, std::size_t nVertexNe
         // Get neighbour information
         long neighId = vertexNeighs[i];
         const Cell &neigh = getCell(neighId);
-        std::array<double, 3> neighNormal = evalFacetNormal(neighId);
+
+        // Get neighbour vertex angle
         double neighVertexAngle = evalAngleAtVertex(neighId, neigh.findVertex(vertexId));
+
+        // Get neighbour normal
+        std::array<double, 3> neighNormal;
+        if (!facetNormalsCache) {
+            neighNormal = evalFacetNormal(neighId);
+        } else {
+            auto cacheItr = facetNormalsCache->find(neighId);
+            if (cacheItr == facetNormalsCache->end()) {
+                cacheItr = facetNormalsCache->insert({neighId, evalFacetNormal(neighId)}).first;
+            }
+            neighNormal = cacheItr->second;
+        }
 
         // Add contribution to unlimited normal
         if (unlimitedNormal) {

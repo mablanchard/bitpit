@@ -60,7 +60,8 @@ public:
         std::array<double, 3> evalLimitedVertexNormal(long, int, double ) const;
         std::array<double, 3> evalLimitedVertexNormal(long, int, std::size_t, const long *, double ) const;
         virtual void evalVertexNormals(long id, int vertex, std::size_t nVertexNeighs, const long *vertexNeighs, double limit,
-                                       std::array<double, 3> *unlimitedNormal, std::array<double, 3> *limitedNormal) const;
+                                       std::array<double, 3> *unlimitedNormal, std::array<double, 3> *limitedNormal,
+                                       std::unordered_map<long, std::array<double,3>> *facetNormalsCache = nullptr) const;
         double evalCellSize(long id) const override;
 
         bool adjustCellOrientation();
