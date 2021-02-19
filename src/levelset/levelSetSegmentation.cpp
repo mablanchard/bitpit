@@ -266,6 +266,9 @@ const std::vector<std::array<double,3>> & SegmentationKernel::computeSegmentVert
     static std::vector<std::array<double,3>> limitedVertexNormals ;
     limitedVertexNormals.resize(nSegmentVertices) ;
 
+    static std::unordered_map<long, std::array<double,3>> segmentNormalsCache ;
+    segmentNormalsCache.clear();
+
     double misalignment = 0. ;
     for( int i = 0; i < nSegmentVertices; ++i ){
         static std::vector<long> vertexNeighbours ;
@@ -274,7 +277,7 @@ const std::vector<std::array<double,3>> & SegmentationKernel::computeSegmentVert
 
         std::array<double, 3> *unlimitedVertexNormal = segmentVertexNormals->data() + i;
         std::array<double, 3> *limitedVertexNormal   = limitedVertexNormals.data() + i;
-        m_surface->evalVertexNormals(segmentId, i, vertexNeighbours.size(), vertexNeighbours.data(), m_featureAngle, unlimitedVertexNormal, limitedVertexNormal) ;
+        m_surface->evalVertexNormals(segmentId, i, vertexNeighbours.size(), vertexNeighbours.data(), m_featureAngle, unlimitedVertexNormal, limitedVertexNormal, &segmentNormalsCache) ;
         misalignment += norm2(*unlimitedVertexNormal - *limitedVertexNormal) ;
     }
 
